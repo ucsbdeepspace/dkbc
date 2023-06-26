@@ -3,7 +3,7 @@
 # client-id and client-secret
 # See https://developer.digikey.com/documentation/oauth for more info
 #
-import argparse
+# import argparse
 import os
 from pprint import pprint
 import requests
@@ -17,15 +17,41 @@ DEFAULT_REDIRECT_URI = "https://alvarop.com/dkbc/dk_oauth.html"
 DEFAULT_API_URL = "https://api.digikey.com"
 
 
-def authorize(config_path, api_url, redirect_uri, no_browser=False, debug=False):
+def authorize(
+    DK_CLIENT_ID,
+    DK_CLIENT_SECRET,
+    config_path,
+    api_url=DEFAULT_API_URL,
+    redirect_uri=DEFAULT_REDIRECT_URI,
+    no_browser=False,
+    debug=False,
+):
+    """
+    Authorize the application to access the Digi-Key API.
+
+    :param DK_CLIENT_ID: The client ID assigned to the application that you generated within the API Portal.
+    :type DK_CLIENT_ID: str
+    :param DK_CLIENT_SECRET: The client secret assigned to the application that you generated within the API Portal.
+    :type DK_CLIENT_SECRET: str
+    :param config_path: The path to the configuration file.
+    :type config_path: str
+    :param api_url: The Digi-Key API URL (sandbox or prod).
+    :type api_url: str
+    :param redirect_uri: The URI that the user will be redirected to after logging in.
+    :type redirect_uri: str
+    :param no_browser: If True, the user will not be prompted to open a browser window to log in.
+    :type no_browser: bool
+    :param debug: If True, the response JSON will be printed to the console.
+    :type debug: bool
+    """
     cfg = {}
     if os.path.isfile(config_path):
         with open(config_path, "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
     else:
         print('"{}" not found!'.format(config_path))
-        cfg["client-id"] = input("Enter client id: ")
-        cfg["client-secret"] = input("Enter client secret: ")
+        cfg["client-id"] = DK_CLIENT_ID
+        cfg["client-secret"] = DK_CLIENT_SECRET
 
     url = (
         api_url
@@ -81,30 +107,30 @@ def authorize(config_path, api_url, redirect_uri, no_browser=False, debug=False)
         sys.exit(-1)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "--config_path", help="Configuration filename", default="config.yml"
-    )
-    parser.add_argument(
-        "--api_url", help="Digi-key API url (sandbox or prod)", default=DEFAULT_API_URL
-    )
-    parser.add_argument(
-        "--redirect_uri", help="OAuth Redirect URI", default=DEFAULT_REDIRECT_URI
-    )
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(
+#         formatter_class=argparse.ArgumentDefaultsHelpFormatter
+#     )
+#     parser.add_argument(
+#         "--config_path", help="Configuration filename", default="config.yml"
+#     )
+#     parser.add_argument(
+#         "--api_url", help="Digi-key API url (sandbox or prod)", default=DEFAULT_API_URL
+#     )
+#     parser.add_argument(
+#         "--redirect_uri", help="OAuth Redirect URI", default=DEFAULT_REDIRECT_URI
+#     )
 
-    parser.add_argument(
-        "--no_browser", help="Don't open web browser automatically", action="store_true"
-    )
-    parser.add_argument("--debug", action="store_true")
-    args = parser.parse_args()
+#     parser.add_argument(
+#         "--no_browser", help="Don't open web browser automatically", action="store_true"
+#     )
+#     parser.add_argument("--debug", action="store_true")
+#     args = parser.parse_args()
 
-    authorize(
-        config_path=args.config_path,
-        api_url=args.api_url,
-        redirect_uri=args.redirect_uri,
-        no_browser=args.no_browser,
-        debug=args.debug,
-    )
+#     authorize(
+#         config_path=args.config_path,
+#         api_url=args.api_url,
+#         redirect_uri=args.redirect_uri,
+#         no_browser=args.no_browser,
+#         debug=args.debug,
+#     )
